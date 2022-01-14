@@ -18,12 +18,12 @@ class ParkedCar:
         movingCarMask = driverCar.get_mask()
         parkedCarMask = self.get_mask()
 
-        offset = (self.x - driverCar.x, self.y - driverCar.y)
+        offset = (int(self.x - driverCar.x), int(self.y - driverCar.y))
 
         overlap = movingCarMask.overlap(parkedCarMask, offset)
 
         if overlap:
-            return True
+            return overlap
 
         return False
 

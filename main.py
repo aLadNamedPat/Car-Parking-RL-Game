@@ -1,4 +1,5 @@
-import pygame, sys
+import pygame
+import sys
 import random
 import os
 from pygame.math import Vector2
@@ -30,7 +31,7 @@ parkingLot = pygame.transform.scale(parkingLot, (780, 450))
 OuterBorder = pygame.image.load("Images\OuterBorder.png")
 OuterBorder = pygame.transform.scale(OuterBorder, (780, 450))
 
-###DISPLAY SURFACE HERE
+# DISPLAY SURFACE HERE
 display_surface = pygame.display.set_mode((780, 450))
 # display_surface.blit(parkingLot, (0, 0))
 # display_surface.blit(parkedCar2, (640, 100))
@@ -40,8 +41,10 @@ clock = pygame.time.Clock()
 
 
 class playerCar(DrivingCar):
-    img = testCar
+    img = playerCar
+    image2 = parkedCar1
     START = (100, 100)
+    win = display_surface
 
 
 def draw(win, images, playerCar, parkedCars, border):
@@ -116,11 +119,16 @@ parkedCars = genParkedCars(8, AllParkingSpaces, parkedCar3)
 
 while run:
     clock.tick(FPS)
-    draw(display_surface, [(parkingLot, (0, 0))], player_car, parkedCars, border)
-    pygame.draw.circle(display_surface, (0, 0, 255), (player_car.x, player_car.y), 4)
+    draw(display_surface, [(parkingLot, (0, 0))],
+         player_car, parkedCars, border)
+    pygame.draw.circle(display_surface, (0, 0, 255),
+                       (player_car.x, player_car.y), 4)
+
     for parkCar in parkedCars:
         if parkCar.collide(player_car):
             print("collide")
+            print(parkCar.collide(player_car))
+            print(player_car.x, player_car.y)
 
     if border.collide(player_car):
         print("HIT")
