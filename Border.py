@@ -15,7 +15,7 @@ class Border:
         movingCarMask = driverCar.get_mask()
         parkedCarMask = self.get_mask()
 
-        offset = (self.x - driverCar.x, self.y - driverCar.y)
+        offset = (int(self.x - driverCar.x_pos), int(self.y - driverCar.y_pos))
 
         overlap = movingCarMask.overlap(parkedCarMask, offset)
 

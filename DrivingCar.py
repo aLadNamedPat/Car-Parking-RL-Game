@@ -14,10 +14,38 @@ class DrivingCar:
         self.max_speed = 3
         self.min_speed = -3
         self.velocity = 0
-        self.angular_velocity = 5
+        self.angular_velocity = 3
         self.acceleration = 0.1
         self.image = self.img
+        self.image = self.image.convert_alpha()
         self.mask = pygame.mask.from_surface(self.image)
+        self.x_pos, self.y_pos = self.x, self.y
+        rotated_image = pygame.transform.rotate(self.image, self.angle)
+        new_rect = rotated_image.get_rect(
+            center=self.image.get_rect(topleft=(self.x, self.y)).center)
+        self.center = new_rect.center
+
+    def get_corners(self):
+
+        radians = self.angle * math.pi / 180
+        car_center = self.center
+        # car_center = (car.x, car.y) # for use later when headless
+        left_center = (car_center[0] + (math.cos((radians + math.pi/2)) * 35),
+                       car_center[1] - (math.sin((radians + math.pi/2)) * 35))
+        right_center = (car_center[0] + math.cos(radians - math.pi/2)
+                        * 35, car_center[1] - math.sin(radians - math.pi/2) * 35)
+
+        top_right = (right_center[0] + math.cos(radians)
+                     * 70, right_center[1] - math.sin(radians) * 70)
+        bottom_right = (right_center[0] - math.cos(radians)
+                        * 70, right_center[1] + math.sin(radians) * 70)
+
+        top_left = (left_center[0] + math.cos(radians)
+                    * 70, left_center[1] - math.sin(radians) * 70)
+        bottom_left = (left_center[0] - math.cos(radians)
+                       * 70, left_center[1] + math.sin(radians) * 70)
+
+        return [top_left, bottom_left, bottom_right, top_right]
 
     def move_forward(self):
         self.velocity = min(self.velocity + self.acceleration, self.max_speed)
@@ -41,18 +69,25 @@ class DrivingCar:
 
         self.x += vertical
         self.y -= horizontal
+        rotated_image = pygame.transform.rotate(self.image, self.angle)
+        new_rect = rotated_image.get_rect(
+            center=self.image.get_rect(topleft=(self.x, self.y)).center)
+        self.x_pos, self.y_pos = new_rect.topleft
+        self.center = new_rect.center
 
     def rotate(self, left=False, right=False):
         if left:
-            self.angle += self.angular_velocity * (self.velocity / self.max_speed)
+            self.angle += self.angular_velocity * \
+                (self.velocity / self.max_speed)
         if right:
-            self.angle -= self.angular_velocity * (self.velocity / self.max_speed)
+            self.angle -= self.angular_velocity * \
+                (self.velocity / self.max_speed)
 
     def draw(self, win):
         blit_rotate_center(win, self.image, (self.x, self.y), self.angle)
 
     def get_mask(self):
-        return pygame.mask.from_surface(self.image)
-
-    def get_corners(self):
-        print(self.angle)
+        # self.image3 = pygame.transform.rotate(self.image2, self.angle)
+        # self.win.blit(self.image3, (100, 100))
+        self.image4 = pygame.transform.rotate(self.image, self.angle)
+        return pygame.mask.from_surface(self.image4)

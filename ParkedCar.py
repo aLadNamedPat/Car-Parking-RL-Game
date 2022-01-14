@@ -8,6 +8,10 @@ class ParkedCar:
         self.image = img
         parkedCar = self.image.convert_alpha()
         self.mask = pygame.mask.from_surface(parkedCar)
+        # FIX
+        # new_rect = rotated_image.get_rect(
+        #    center=self.image.get_rect(topleft=(self.x, self.y)).center)
+        # self.rect = self.image.get_rect(topleft=(self.x, self.y)).center)
 
     def get_mask(self):
         parkedCar = self.image.convert_alpha()
@@ -18,12 +22,12 @@ class ParkedCar:
         movingCarMask = driverCar.get_mask()
         parkedCarMask = self.get_mask()
 
-        offset = (self.x - driverCar.x, self.y - driverCar.y)
+        offset = (int(self.x - driverCar.x_pos), int(self.y - driverCar.y_pos))
 
         overlap = movingCarMask.overlap(parkedCarMask, offset)
 
         if overlap:
-            return True
+            return overlap
 
         return False
 
