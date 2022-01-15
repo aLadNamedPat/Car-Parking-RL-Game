@@ -14,12 +14,17 @@ class DrivingCar:
         self.max_speed = 3
         self.min_speed = -3
         self.velocity = 0
+<<<<<<< HEAD
         self.angular_velocity = 3
+=======
+        self.angular_velocity = 0.5
+>>>>>>> 17f24328ade001d49b84c0dd4e746d0e7fe6e180
         self.acceleration = 0.1
         self.image = self.img
         self.image = self.image.convert_alpha()
         self.mask = pygame.mask.from_surface(self.image)
         self.x_pos, self.y_pos = self.x, self.y
+<<<<<<< HEAD
         rotated_image = pygame.transform.rotate(self.image, self.angle)
         new_rect = rotated_image.get_rect(
             center=self.image.get_rect(topleft=(self.x, self.y)).center)
@@ -46,6 +51,8 @@ class DrivingCar:
                        * 70, left_center[1] + math.sin(radians) * 70)
 
         return [top_left, bottom_left, bottom_right, top_right]
+=======
+>>>>>>> 17f24328ade001d49b84c0dd4e746d0e7fe6e180
 
     def move_forward(self):
         self.velocity = min(self.velocity + self.acceleration, self.max_speed)
@@ -77,6 +84,7 @@ class DrivingCar:
         new_rect = rotated_image.get_rect(
             center=self.image.get_rect(topleft=(self.x, self.y)).center)
         self.x_pos, self.y_pos = new_rect.topleft
+<<<<<<< HEAD
         self.center = new_rect.center
 
     def rotate(self, left=False, right=False):
@@ -86,12 +94,30 @@ class DrivingCar:
         if right:
             self.angle -= self.angular_velocity * \
                 (self.velocity / self.max_speed)
+=======
+
+    def rotate(self, left=False, right=False):
+        if left:
+            self.angle += self.angular_velocity
+        if right:
+            self.angle -= self.angular_velocity
+>>>>>>> 17f24328ade001d49b84c0dd4e746d0e7fe6e180
 
     def draw(self, win):
         blit_rotate_center(win, self.image, (self.x, self.y), self.angle)
 
     def get_mask(self):
+<<<<<<< HEAD
         # self.image3 = pygame.transform.rotate(self.image2, self.angle)
         # self.win.blit(self.image3, (100, 100))
         self.image4 = pygame.transform.rotate(self.image, self.angle)
         return pygame.mask.from_surface(self.image4)
+=======
+        self.image3 = pygame.transform.rotate(self.image2, self.angle)
+        self.win.blit(self.image3, (100, 100))
+        self.image4 = pygame.transform.rotate(self.image, self.angle)
+        return pygame.mask.from_surface(self.image4)
+
+    def get_corners(self):
+        print(self.angle)
+>>>>>>> 17f24328ade001d49b84c0dd4e746d0e7fe6e180

@@ -31,9 +31,12 @@ parkingLot = pygame.transform.scale(parkingLot, (780, 450))
 OuterBorder = pygame.image.load("Images\OuterBorder.png")
 OuterBorder = pygame.transform.scale(OuterBorder, (780, 450))
 
+<<<<<<< HEAD
 winningParkingSpace = pygame.image.load("Images\ParkingSpace.png")
 winningParkingSpace = pygame.transform.scale(winningParkingSpace, (160, 90))
 
+=======
+>>>>>>> 17f24328ade001d49b84c0dd4e746d0e7fe6e180
 # DISPLAY SURFACE HERE
 display_surface = pygame.display.set_mode((780, 450))
 # display_surface.blit(parkingLot, (0, 0))
@@ -43,9 +46,22 @@ run = True
 clock = pygame.time.Clock()
 
 
+<<<<<<< HEAD
 def draw(win, images, playerCar, parkedCars, wingoal, border):
     for img, pos in images:
         win.blit(img, pos)
+=======
+class playerCar(DrivingCar):
+    img = playerCar
+    image2 = parkedCar1
+    START = (100, 100)
+    win = display_surface
+
+
+def draw(win, images, playerCar, parkedCars, border):
+    # for img, pos in images:
+    #     win.blit(img, pos)
+>>>>>>> 17f24328ade001d49b84c0dd4e746d0e7fe6e180
     for parkedCar in parkedCars:
         parkedCar.draw(win)
     wingoal.draw(win)
@@ -134,6 +150,7 @@ player_car = playerCar()
 while run:
     clock.tick(FPS)
     draw(display_surface, [(parkingLot, (0, 0))],
+<<<<<<< HEAD
          player_car, parkedCars, goal, border)
     print(player_car.angle)
     # if goal.winCondition(player_car):
@@ -151,6 +168,17 @@ while run:
     #         print("collide")
     #         print(parkCar.collide(player_car))
     #         print(player_car.x, player_car.y)
+=======
+         player_car, parkedCars, border)
+    pygame.draw.circle(display_surface, (0, 0, 255),
+                       (player_car.x, player_car.y), 4)
+
+    for parkCar in parkedCars:
+        if parkCar.collide(player_car):
+            print("collide")
+            print(parkCar.collide(player_car))
+            print(player_car.x, player_car.y)
+>>>>>>> 17f24328ade001d49b84c0dd4e746d0e7fe6e180
 
     # if border.collide(player_car):
     #     print("HIT")
