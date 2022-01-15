@@ -66,6 +66,10 @@ class DrivingCar:
         radians = math.radians(self.angle)
         vertical = math.cos(radians) * self.velocity
         horizontal = math.sin(radians) * self.velocity
+        if self.angle > 360:
+            self.angle -= 360
+        if self.angle < 0:
+            self.angle += 360
 
         self.x += vertical
         self.y -= horizontal

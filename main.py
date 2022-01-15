@@ -4,7 +4,7 @@ import random
 import os
 from pygame.math import Vector2
 from DrivingCar import DrivingCar
-from ParkedCar import ParkedCar
+from Parked import ParkedCar, Goal
 from Border import Border
 import time
 
@@ -32,7 +32,7 @@ OuterBorder = pygame.image.load("Images\OuterBorder.png")
 OuterBorder = pygame.transform.scale(OuterBorder, (780, 450))
 
 winningParkingSpace = pygame.image.load("Images\ParkingSpace.png")
-winningParkingSpace = pygame.transform.scale(winningParkingSpace, (190, 95))
+winningParkingSpace = pygame.transform.scale(winningParkingSpace, (160, 90))
 
 # DISPLAY SURFACE HERE
 display_surface = pygame.display.set_mode((780, 450))
@@ -43,17 +43,12 @@ run = True
 clock = pygame.time.Clock()
 
 
-class playerCar(DrivingCar):
-    img = playerCar
-    START = (100, 100)
-    win = display_surface
-
-
-def draw(win, images, playerCar, parkedCars, border):
+def draw(win, images, playerCar, parkedCars, wingoal, border):
     for img, pos in images:
         win.blit(img, pos)
     for parkedCar in parkedCars:
         parkedCar.draw(win)
+    wingoal.draw(win)
     playerCar.draw(win)
     border.draw(win)
     pygame.display.update()
@@ -85,7 +80,6 @@ parkingSpotsR = [
 ]
 
 AllParkingSpaces = [
-    [(16, 10), 0],
     [(16, 100), 0],
     [(16, 190), 0],
     [(16, 280), 0],
@@ -102,7 +96,6 @@ AllParkingSpaces = [
     [(640, 280), 1],
     [(640, 370), 1],
 ]
-player_car = playerCar()
 
 
 def genParkedCars(numCars, parkingSpots, img):
@@ -113,19 +106,38 @@ def genParkedCars(numCars, parkingSpots, img):
     spots1 = spots[0:len(spots) - 2]
     # ADDING WIN GAME CONDITION
     spots2 = spots[len(spots) - 1]
-    for num in spots:
+    for num in spots1:
         carParks.append(parkingSpots2[num][0])
         cars.append(ParkedCar(parkingSpots2[num][0], img))
-    return cars
+    return cars, parkingSpots2[spots2][0], parkingSpots2[spots2][1]
 
 
-border = Border((0, -2), OuterBorder)
-parkedCars = genParkedCars(8, AllParkingSpaces, parkedCar3)
+border = Border((0, -2), OuterBorder, (780, 450))
+parking = genParkedCars(8, AllParkingSpaces, parkedCar3)
+parkedCars = parking[0]
+carParkedPosition = parking[2]
+if carParkedPosition == 0:
+    goalparking = (parking[1][0] - 5, parking[1][1] - 10)
+if carParkedPosition == 1:
+    goalparking = (parking[1][0] - 27, parking[1][1] - 10)
+
+goal = Goal(goalparking, winningParkingSpace, (160, 80))
+
+
+class playerCar(DrivingCar):
+    img = playerCar
+    START = (16, 10)
+    win = display_surface
+player_car = playerCar()
+
 
 while run:
     clock.tick(FPS)
     draw(display_surface, [(parkingLot, (0, 0))],
-         player_car, parkedCars, border)
+         player_car, parkedCars, goal, border)
+    print(player_car.angle)
+    # if goal.winCondition(player_car):
+    #     print("WIN")
     # pygame.draw.circle(display_surface, (0, 0, 255),
     #                    player_car.get_corners()[0], 4)
     # pygame.draw.circle(display_surface, (0, 0, 255),
@@ -134,14 +146,14 @@ while run:
     #                    player_car.get_corners()[2], 4)
     # pygame.draw.circle(display_surface, (0, 0, 255),
     #                    player_car.get_corners()[3], 4)
-    for parkCar in parkedCars:
-        if parkCar.collide(player_car):
-            print("collide")
-            print(parkCar.collide(player_car))
-            print(player_car.x, player_car.y)
+    # for parkCar in parkedCars:
+    #     if parkCar.collide(player_car):
+    #         print("collide")
+    #         print(parkCar.collide(player_car))
+    #         print(player_car.x, player_car.y)
 
-    if border.collide(player_car):
-        print("HIT")
+    # if border.collide(player_car):
+    #     print("HIT")
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

@@ -3,9 +3,10 @@ import math
 
 
 class Border:
-    def __init__(self, POS, img):
+    def __init__(self, POS, img, dimensions):
         self.x, self.y = POS
         self.image = img
+        self.length, self.width = dimensions
 
     def get_mask(self):
         border = self.image.convert_alpha()
@@ -23,6 +24,14 @@ class Border:
             return True
 
         return False
+
+    def get_corners(self):
+        top_left = (self.x, self.y)
+        top_right = (self.x + self.length, self.y)
+        bottom_left = (self.x, self.y + self.width)
+        bottom_right = (self.x + self.length, self.y + self.width)
+
+        return [top_left, top_right, bottom_left, bottom_right]
 
     def draw(self, win):
         win.blit(self.image, (self.x, self.y))
