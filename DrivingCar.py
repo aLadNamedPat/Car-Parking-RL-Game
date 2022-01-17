@@ -1,7 +1,7 @@
 import pygame
-from pygame.math import Vector2
 from rotation import blit_rotate_center
 import math
+from Line_Intersection import *
 
 
 class DrivingCar:
@@ -14,45 +14,92 @@ class DrivingCar:
         self.max_speed = 3
         self.min_speed = -3
         self.velocity = 0
-<<<<<<< HEAD
         self.angular_velocity = 3
-=======
-        self.angular_velocity = 0.5
->>>>>>> 17f24328ade001d49b84c0dd4e746d0e7fe6e180
         self.acceleration = 0.1
         self.image = self.img
         self.image = self.image.convert_alpha()
         self.mask = pygame.mask.from_surface(self.image)
         self.x_pos, self.y_pos = self.x, self.y
-<<<<<<< HEAD
         rotated_image = pygame.transform.rotate(self.image, self.angle)
         new_rect = rotated_image.get_rect(
             center=self.image.get_rect(topleft=(self.x, self.y)).center)
         self.center = new_rect.center
+        self.is_Alive = True
+        self.win_Game = False
+        radians = self.angle * math.pi / 180
+        self.original_center = self.center
+        # car_center = (car.x, car.y) # for use later when headless
+        self.top_center = (self.center[0] + math.cos(radians)
+                           * 70, self.center[1] - math.sin(radians) * 70)
+
+        self.bottom_center = (self.center[0] - math.cos(radians)
+                              * 70, self.center[1] + math.sin(radians) * 70)
+
+        self.left_center = (self.center[0] + (math.cos((radians + math.pi/2)) * 35),
+                            self.center[1] - (math.sin((radians + math.pi/2)) * 35))
+        self.right_center = (self.center[0] + math.cos(radians - math.pi/2)
+                             * 35, self.center[1] - math.sin(radians - math.pi/2) * 35)
+
+        self.top_right = (self.right_center[0] + math.cos(radians)
+                          * 70, self.right_center[1] - math.sin(radians) * 70)
+        self.bottom_right = (self.right_center[0] - math.cos(radians)
+                             * 70, self.right_center[1] + math.sin(radians) * 70)
+
+        self.top_left = (self.left_center[0] + math.cos(radians)
+                         * 70, self.left_center[1] - math.sin(radians) * 70)
+        self.bottom_left = (self.left_center[0] - math.cos(radians)
+                            * 70, self.left_center[1] + math.sin(radians) * 70)
 
     def get_corners(self):
 
         radians = self.angle * math.pi / 180
-        car_center = self.center
         # car_center = (car.x, car.y) # for use later when headless
-        left_center = (car_center[0] + (math.cos((radians + math.pi/2)) * 35),
-                       car_center[1] - (math.sin((radians + math.pi/2)) * 35))
-        right_center = (car_center[0] + math.cos(radians - math.pi/2)
-                        * 35, car_center[1] - math.sin(radians - math.pi/2) * 35)
+        self.top_center = (self.center[0] + math.cos(radians)
+                           * 70, self.center[1] - math.sin(radians) * 70)
 
-        top_right = (right_center[0] + math.cos(radians)
-                     * 70, right_center[1] - math.sin(radians) * 70)
-        bottom_right = (right_center[0] - math.cos(radians)
-                        * 70, right_center[1] + math.sin(radians) * 70)
+        self.bottom_center = (self.center[0] - math.cos(radians)
+                              * 70, self.center[1] + math.sin(radians) * 70)
 
-        top_left = (left_center[0] + math.cos(radians)
-                    * 70, left_center[1] - math.sin(radians) * 70)
-        bottom_left = (left_center[0] - math.cos(radians)
-                       * 70, left_center[1] + math.sin(radians) * 70)
+        self.left_center = (self.center[0] + (math.cos((radians + math.pi/2)) * 35),
+                            self.center[1] - (math.sin((radians + math.pi/2)) * 35))
+        self.right_center = (self.center[0] + math.cos(radians - math.pi/2)
+                             * 35, self.center[1] - math.sin(radians - math.pi/2) * 35)
 
-        return [top_left, bottom_left, bottom_right, top_right]
-=======
->>>>>>> 17f24328ade001d49b84c0dd4e746d0e7fe6e180
+        self.top_right = (self.right_center[0] + math.cos(radians)
+                          * 70, self.right_center[1] - math.sin(radians) * 70)
+        self.bottom_right = (self.right_center[0] - math.cos(radians)
+                             * 70, self.right_center[1] + math.sin(radians) * 70)
+
+        self.top_left = (self.left_center[0] + math.cos(radians)
+                         * 70, self.left_center[1] - math.sin(radians) * 70)
+        self.bottom_left = (self.left_center[0] - math.cos(radians)
+                            * 70, self.left_center[1] + math.sin(radians) * 70)
+
+        return [self.top_left, self.bottom_left, self.bottom_right, self.top_right]
+
+    def update_corners(self):
+        radians = self.angle * math.pi / 180
+        # car_center = (car.x, car.y) # for use later when headless
+        self.top_center = (self.center[0] + math.cos(radians)
+                           * 70, self.center[1] - math.sin(radians) * 70)
+
+        self.bottom_center = (self.center[0] - math.cos(radians)
+                              * 70, self.center[1] + math.sin(radians) * 70)
+
+        self.left_center = (self.center[0] + (math.cos((radians + math.pi/2)) * 35),
+                            self.center[1] - (math.sin((radians + math.pi/2)) * 35))
+        self.right_center = (self.center[0] + math.cos(radians - math.pi/2)
+                             * 35, self.center[1] - math.sin(radians - math.pi/2) * 35)
+
+        self.top_right = (self.right_center[0] + math.cos(radians)
+                          * 70, self.right_center[1] - math.sin(radians) * 70)
+        self.bottom_right = (self.right_center[0] - math.cos(radians)
+                             * 70, self.right_center[1] + math.sin(radians) * 70)
+
+        self.top_left = (self.left_center[0] + math.cos(radians)
+                         * 70, self.left_center[1] - math.sin(radians) * 70)
+        self.bottom_left = (self.left_center[0] - math.cos(radians)
+                            * 70, self.left_center[1] + math.sin(radians) * 70)
 
     def move_forward(self):
         self.velocity = min(self.velocity + self.acceleration, self.max_speed)
@@ -84,40 +131,68 @@ class DrivingCar:
         new_rect = rotated_image.get_rect(
             center=self.image.get_rect(topleft=(self.x, self.y)).center)
         self.x_pos, self.y_pos = new_rect.topleft
-<<<<<<< HEAD
         self.center = new_rect.center
+        self.update_corners()
 
     def rotate(self, left=False, right=False):
         if left:
-            self.angle += self.angular_velocity * \
-                (self.velocity / self.max_speed)
-        if right:
-            self.angle -= self.angular_velocity * \
-                (self.velocity / self.max_speed)
-=======
+            self.angle += self.angular_velocity * self.velocity / self.max_speed
 
-    def rotate(self, left=False, right=False):
-        if left:
-            self.angle += self.angular_velocity
         if right:
-            self.angle -= self.angular_velocity
->>>>>>> 17f24328ade001d49b84c0dd4e746d0e7fe6e180
+            self.angle -= self.angular_velocity * self.velocity / self.max_speed
 
     def draw(self, win):
         blit_rotate_center(win, self.image, (self.x, self.y), self.angle)
 
     def get_mask(self):
-<<<<<<< HEAD
         # self.image3 = pygame.transform.rotate(self.image2, self.angle)
         # self.win.blit(self.image3, (100, 100))
         self.image4 = pygame.transform.rotate(self.image, self.angle)
         return pygame.mask.from_surface(self.image4)
-=======
-        self.image3 = pygame.transform.rotate(self.image2, self.angle)
-        self.win.blit(self.image3, (100, 100))
-        self.image4 = pygame.transform.rotate(self.image, self.angle)
-        return pygame.mask.from_surface(self.image4)
 
-    def get_corners(self):
-        print(self.angle)
->>>>>>> 17f24328ade001d49b84c0dd4e746d0e7fe6e180
+    def sensor_measures(self, objects):
+        maxSensorLength = 200
+        # 8 total sensor measurements
+        # TopCenter, TopRight, MidRight, BottomRight, BottomCenter, BottomLeft, MidLeft, TopLeft
+        sensors = [amplify(self.center, self.top_center, maxSensorLength),
+                   amplify(self.center, self.top_right, maxSensorLength),
+                   amplify(self.center, self.right_center, maxSensorLength),
+                   amplify(self.center, self.bottom_right, maxSensorLength),
+                   amplify(self.center, self.bottom_center, maxSensorLength),
+                   amplify(self.center, self.bottom_left, maxSensorLength),
+                   amplify(self. center, self.left_center, maxSensorLength),
+                   amplify(self.center, self.top_left, maxSensorLength)
+                   ]
+
+        sensorReturns = [[], [], [], [], [], [], [], []]
+        Sensors = ["front", "front-right", "center-right", "back-right",
+                   "back", "back-left", "center-left", "front-left"]
+        values = []
+        for object in objects:
+            top_left, top_right, bottom_left, bottom_right = object.get_corners()
+            top_segment = (top_left, top_right)
+            right_segment = (top_right, bottom_right)
+            bottom_segment = (bottom_right, bottom_left)
+            left_segment = (bottom_left, top_left)
+            segments = [top_segment, right_segment,
+                        bottom_segment, left_segment]
+            for segment in segments:
+                for i in range(len(sensors)):
+                    if doIntersect(sensors[i], segment):
+                        intersectPoint = get_intersect(segment, sensors[i])
+                        sensorReturns[i].append(
+                            get_distance(intersectPoint, self.center))
+                    else:
+                        sensorReturns[i].append(maxSensorLength)
+        for sensor in sensorReturns:
+            values.append(min(sensor))
+        return values
+
+    def get_distance_from_goal(self, goal):
+        distance = get_distance(self.center, goal.center)
+        return distance
+
+    def if_moved(self):
+        if get_distance(self.original_center, self.center) > 30:
+            return True
+        return False

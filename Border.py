@@ -31,7 +31,7 @@ class Border:
         bottom_left = (self.x, self.y + self.width)
         bottom_right = (self.x + self.length, self.y + self.width)
 
-        return [top_left, top_right, bottom_left, bottom_right]
+        return top_left, top_right, bottom_left, bottom_right
 
     def draw(self, win):
         win.blit(self.image, (self.x, self.y))

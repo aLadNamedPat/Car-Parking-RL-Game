@@ -1,16 +1,14 @@
 import pygame
 import math
 
-from sqlalchemy import false
-
 
 class ParkedCar:
-    def __init__(self, POS, img):
+    def __init__(self, POS, img, dimensions):
         self.x, self.y = POS
         self.image = img
         parkedCar = self.image.convert_alpha()
         self.mask = pygame.mask.from_surface(parkedCar)
-
+        self.length, self.width = dimensions
         # FIX
         # new_rect = rotated_image.get_rect(
         #    center=self.image.get_rect(topleft=(self.x, self.y)).center)
@@ -34,6 +32,14 @@ class ParkedCar:
 
         return False
 
+    def get_corners(self):
+        top_left = (self.x, self.y)
+        top_right = (self.x + self.length, self.y)
+        bottom_left = (self.x, self.y + self.width)
+        bottom_right = (self.x + self.length, self.y + self.width)
+
+        return top_left, top_right, bottom_left, bottom_right
+
     def draw(self, win):
         win.blit(self.image, (self.x, self.y))
 
@@ -43,14 +49,17 @@ class Goal:
         self.image = img
         self.x, self.y = POS
         self.length, self.width = dimensions
+        new_rect = self.image.get_rect(
+            center=self.image.get_rect(topleft=(self.x, self.y)).center)
+        self.center = new_rect.center
 
     def draw(self, win):
         win.blit(self.image, (self.x, self.y))
 
     def get_corners(self):
         top_left_corner = (self.x, self.y)
-        top_right_corner = (self.x + self.length, self.y)
-        bottom_left_corner = (self.x, self.y + self.width)
+        # top_right_corner = (self.x + self.length, self.y)
+        # bottom_left_corner = (self.x, self.y + self.width)
         bottom_right_corner = (self.x + self.length, self.y + self.width)
 
         return [top_left_corner, bottom_right_corner]

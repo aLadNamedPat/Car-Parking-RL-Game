@@ -1,209 +1,67 @@
-import pygame
 import sys
+import numpy as np
+import math
 import random
-import os
-from pygame.math import Vector2
-from DrivingCar import DrivingCar
-from Parked import ParkedCar, Goal
-from Border import Border
-import time
 
-pygame.init()
-pygame.font.init()
-
-parkedCar1 = pygame.image.load("Images\parkedCar1.png")
-parkedCar2 = pygame.image.load("Images\parkedCar2.png")
-parkedCar3 = pygame.image.load("Images\parkedCar3.png")
-
-parkedCar1 = pygame.transform.scale(parkedCar1, (120, 60))
-parkedCar2 = pygame.transform.scale(parkedCar2, (120, 60))
-parkedCar3 = pygame.transform.scale(parkedCar3, (120, 60))
-parkedCarsList = [parkedCar1, parkedCar2, parkedCar3]
-playerCar = pygame.image.load("Images\playerCar.png")
-playerCar = pygame.transform.scale(playerCar, (140, 70))
-
-testCar = pygame.image.load("Images\\testCar.png")
-testCar = pygame.transform.scale(testCar, (130, 65))
-parkingLot = pygame.image.load("Images\Parking Lot Image.png")
-parkingLot = pygame.transform.rotate(parkingLot, 90)
-parkingLot = pygame.transform.scale(parkingLot, (780, 450))
-
-OuterBorder = pygame.image.load("Images\OuterBorder.png")
-OuterBorder = pygame.transform.scale(OuterBorder, (780, 450))
-
-<<<<<<< HEAD
-winningParkingSpace = pygame.image.load("Images\ParkingSpace.png")
-winningParkingSpace = pygame.transform.scale(winningParkingSpace, (160, 90))
-
-=======
->>>>>>> 17f24328ade001d49b84c0dd4e746d0e7fe6e180
-# DISPLAY SURFACE HERE
-display_surface = pygame.display.set_mode((780, 450))
-# display_surface.blit(parkingLot, (0, 0))
-# display_surface.blit(parkedCar2, (640, 100))
-FPS = 60
-run = True
-clock = pygame.time.Clock()
+import gym
+import gym_game
 
 
-<<<<<<< HEAD
-def draw(win, images, playerCar, parkedCars, wingoal, border):
-    for img, pos in images:
-        win.blit(img, pos)
-=======
-class playerCar(DrivingCar):
-    img = playerCar
-    image2 = parkedCar1
-    START = (100, 100)
-    win = display_surface
+def simulate():
+    global epsilon, epsilon_decay
+    for episode in range(MAX_EPISODES):
+
+        # Init environment
+        state = env.reset()
+        total_reward = 0
+
+        # AI tries up to MAX_TRY times
+        for t in range(MAX_TRY):
+
+            # In the beginning, do random action to learn
+            # if random.uniform(0, 1) < epsilon:
+            action = env.action_space.sample()
+            # else:
+            #     action = np.argmax(q_table[state])
+
+            # Do action and get result
+            next_state, reward, done, _ = env.step(action)
+            total_reward += reward
+
+            # # Get correspond q value from state, action pair
+            # q_value = q_table[state][action]
+            # best_q = np.max(q_table[next_state])
+
+            # # Q(state, action) <- (1 - a)Q(state, action) + a(reward + rmaxQ(next state, all actions))
+            # q_table[state][action] = (
+            #     1 - learning_rate) * q_value + learning_rate * (reward + gamma * best_q)
+
+            # # Set up for the next iteration
+            state = next_state
+
+            # Draw games
+            env.render()
+
+            # When episode is done, print reward
+            if done or t >= MAX_TRY - 1:
+                print("Episode %d finished after %i time steps with total reward = %f." % (
+                    episode, t, total_reward))
+                break
+
+        # exploring rate decay
+        if epsilon >= 0.005:
+            epsilon *= epsilon_decay
 
 
-def draw(win, images, playerCar, parkedCars, border):
-    # for img, pos in images:
-    #     win.blit(img, pos)
->>>>>>> 17f24328ade001d49b84c0dd4e746d0e7fe6e180
-    for parkedCar in parkedCars:
-        parkedCar.draw(win)
-    wingoal.draw(win)
-    playerCar.draw(win)
-    border.draw(win)
-    pygame.display.update()
-
-
-parkingSpotsL = [
-    [(16, 10), 0],
-    [(16, 100), 0],
-    [(16, 190), 0],
-    [(16, 280), 0],
-    [(16, 370), 0],
-]
-
-parkingSpotsC = [
-    [(250, 100), 1],
-    [(250, 190), 1],
-    [(250, 280), 1],
-    [(395, 100), 0],
-    [(395, 190), 0],
-    [(395, 280), 0],
-]
-
-parkingSpotsR = [
-    [(640, 10), 1],
-    [(640, 100), 1],
-    [(640, 190), 1],
-    [(640, 280), 1],
-    [(640, 370), 1],
-]
-
-AllParkingSpaces = [
-    [(16, 100), 0],
-    [(16, 190), 0],
-    [(16, 280), 0],
-    [(16, 370), 0],
-    [(250, 100), 1],
-    [(250, 190), 1],
-    [(250, 280), 1],
-    [(395, 100), 0],
-    [(395, 190), 0],
-    [(395, 280), 0],
-    [(640, 10), 1],
-    [(640, 100), 1],
-    [(640, 190), 1],
-    [(640, 280), 1],
-    [(640, 370), 1],
-]
-
-
-def genParkedCars(numCars, parkingSpots, img):
-    parkingSpots2 = parkingSpots
-    carParks = []
-    cars = []
-    spots = random.sample(range(len(parkingSpots)), numCars)
-    spots1 = spots[0:len(spots) - 2]
-    # ADDING WIN GAME CONDITION
-    spots2 = spots[len(spots) - 1]
-    for num in spots1:
-        carParks.append(parkingSpots2[num][0])
-        cars.append(ParkedCar(parkingSpots2[num][0], img))
-    return cars, parkingSpots2[spots2][0], parkingSpots2[spots2][1]
-
-
-border = Border((0, -2), OuterBorder, (780, 450))
-parking = genParkedCars(8, AllParkingSpaces, parkedCar3)
-parkedCars = parking[0]
-carParkedPosition = parking[2]
-if carParkedPosition == 0:
-    goalparking = (parking[1][0] - 5, parking[1][1] - 10)
-if carParkedPosition == 1:
-    goalparking = (parking[1][0] - 27, parking[1][1] - 10)
-
-goal = Goal(goalparking, winningParkingSpace, (160, 80))
-
-
-class playerCar(DrivingCar):
-    img = playerCar
-    START = (16, 10)
-    win = display_surface
-player_car = playerCar()
-
-
-while run:
-    clock.tick(FPS)
-    draw(display_surface, [(parkingLot, (0, 0))],
-<<<<<<< HEAD
-         player_car, parkedCars, goal, border)
-    print(player_car.angle)
-    # if goal.winCondition(player_car):
-    #     print("WIN")
-    # pygame.draw.circle(display_surface, (0, 0, 255),
-    #                    player_car.get_corners()[0], 4)
-    # pygame.draw.circle(display_surface, (0, 0, 255),
-    #                    player_car.get_corners()[1], 4)
-    # pygame.draw.circle(display_surface, (0, 0, 255),
-    #                    player_car.get_corners()[2], 4)
-    # pygame.draw.circle(display_surface, (0, 0, 255),
-    #                    player_car.get_corners()[3], 4)
-    # for parkCar in parkedCars:
-    #     if parkCar.collide(player_car):
-    #         print("collide")
-    #         print(parkCar.collide(player_car))
-    #         print(player_car.x, player_car.y)
-=======
-         player_car, parkedCars, border)
-    pygame.draw.circle(display_surface, (0, 0, 255),
-                       (player_car.x, player_car.y), 4)
-
-    for parkCar in parkedCars:
-        if parkCar.collide(player_car):
-            print("collide")
-            print(parkCar.collide(player_car))
-            print(player_car.x, player_car.y)
->>>>>>> 17f24328ade001d49b84c0dd4e746d0e7fe6e180
-
-    # if border.collide(player_car):
-    #     print("HIT")
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
-            break
-
-    keys = pygame.key.get_pressed()
-    moved = False
-
-    if keys[pygame.K_a]:
-        player_car.rotate(left=True)
-    if keys[pygame.K_d]:
-        player_car.rotate(right=True)
-    if keys[pygame.K_w]:
-        moved = True
-        player_car.move_forward()
-    if keys[pygame.K_s]:
-        moved = True
-        player_car.move_backward()
-
-    if not moved:
-        player_car.break_speed()
-
-
-pygame.quit()
+if __name__ == "__main__":
+    env = gym.make("Pygame-v0")
+    MAX_EPISODES = 9999
+    MAX_TRY = 1000
+    epsilon = 1
+    epsilon_decay = 0.999
+    learning_rate = 0.1
+    gamma = 0.6
+    num_box = tuple((env.observation_space.high +
+                    np.ones(env.observation_space.shape)).astype(int))
+    q_table = np.zeros(num_box + (env.action_space.n,))
+    simulate()
